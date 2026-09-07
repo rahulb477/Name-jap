@@ -1,0 +1,26 @@
+{
+  "name": "Naam Jap Counter — 108 Jap",
+  "short_name": "Naam Jap",
+  "description": "Count your 108 jap with beads, bubbles and voice. Offline-first and private.",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "background_color": "#F3EDE3",
+  "theme_color": "#F4711F",
+  "orientation": "portrait",
+  "categories": ["lifestyle", "health"],
+  "icons": [
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
