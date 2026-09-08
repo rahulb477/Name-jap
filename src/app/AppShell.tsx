@@ -13,12 +13,12 @@ import {
   HomeIcon,
   GearIcon,
 } from "../components/NavIcons";
-import { CounterScreen } from "./screens/CounterScreen";
-import { GameScreen } from "./screens/GameScreen";
-import { ProgressScreen } from "./screens/ProgressScreen";
-import { MantraScreen } from "./screens/MantraScreen";
-import { VoiceScreen } from "./screens/VoiceScreen";
-import { SettingsScreen } from "./screens/SettingsScreen";
+import { CounterScreen } from "./screen/CounterScreen";
+import { GameScreen } from "./screen/GameScreen";
+import { ProgressScreen } from "./screen/ProgressScreen";
+import { MantraScreen } from "./screen/MantraScreen";
+import { VoiceScreen } from "./screen/VoiceScreen";
+import { SettingsScreen } from "./screen/SettingsScreen";
 import { Splash } from "./Splash";
 import { LanguageScreen } from "./LanguageScreen";
 
