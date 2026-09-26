@@ -1,12 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- The web app's Voice tab requests the microphone via getUserMedia().
+         The system permission dialog is only shown when the web app asks
+         for it — never at install or launch. -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <!-- The web app references a hosted brand logo image and web fonts.
+         The app is fully functional without a network connection (bundled
+         offline fallbacks); the permission only lets it use the network
+         when one is available. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
-        android:label="Naam Jap Counter"
-        android:supportsRtl="true">
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:configChanges="orientation|screenSize|keyboardHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

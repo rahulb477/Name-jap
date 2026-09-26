@@ -79,6 +79,44 @@ jobs:
           fi
           echo "Java 17+ requirement satisfied (detected Java $spec_version)."
 
+      # ---------------------------------------------------------------
+      # Web build — the APK bundles the React production build, so the
+      # web app must be built BEFORE any Android Gradle step runs.
+      # Node 22 LTS: Vite 7 requires Node 20.19+ / 22.12+.
+      # ---------------------------------------------------------------
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install npm dependencies
+        shell: bash
+        run: npm ci --no-audit --no-fund
+
+      - name: Build React production app
+        shell: bash
+        run: npm run build
+
+      - name: Verify dist/ output
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ ! -f "dist/index.html" ] || [ ! -s "dist/index.html" ]; then
+            echo "::error::dist/index.html is missing or empty after 'npm run build'"
+            if [ -d "dist" ]; then
+              echo "Found under dist/:"
+              find dist -type f -print
+            else
+              echo "dist/ does not exist."
+            fi
+            exit 1
+          fi
+
+          echo "Verified React production build output:"
+          find dist -type f -exec ls -l {} +
+
       - name: Set up Gradle 9.3.1
         uses: gradle/actions/setup-gradle@v4
         with:
