@@ -43,6 +43,17 @@ Node 18+ recommended. No environment variables are required — see
 ├── tsconfig.json               # TypeScript config
 ├── .env.example                # optional env vars (copy to .env)
 ├── .gitignore
+├── .github/workflows/build-apk.yml  # CI: React build → debug APK → artifact + release
+├── build.gradle.kts            # Android root build file (AGP)
+├── settings.gradle.kts         # Android project settings (includes :app)
+├── gradle.properties           # Gradle/AGP flags
+├── gradle/libs.versions.toml   # AGP version catalog
+├── app/                        # Android WebView wrapper — ships dist/ inside the APK
+│   ├── build.gradle.kts        # app module; registers dist/ as the web assets
+│   └── src/main/
+│       ├── AndroidManifest.xml # "Naam Jap" label, icon, mic + internet permissions
+│       ├── java/app/naamjap/counter/MainActivity.java  # WebView shell (no native UI)
+│       └── res/                # strings, theme, launcher icons (from public/icon-512.png)
 ├── public/                     # served as-is; copied into dist/
 │   ├── icon-512.png            # PWA / home-screen icon (brand logo)
 │   ├── manifest.webmanifest    # install manifest
@@ -147,6 +158,52 @@ project needs none.
 
 Inside the app, **Settings → Download App** packages the same single-file app
 for end users. See `RELEASE.md` for the release checklist.
+
+## Android APK
+
+The Android app is a thin **WebView wrapper** around this same web app — the
+React application is never recreated natively and remains the single source of
+truth for the UI.
+
+```
+npm ci && npm run build          # → dist/ (self-contained single-file app)
+        ↓
+gradle :app:assembleDebug        # packages dist/ into the APK's assets/
+        ↓
+app/build/outputs/apk/debug/app-debug.apk
+```
+
+- `app/build.gradle.kts` registers `dist/` as the module's web assets; the
+  WebView loads `file:///android_asset/index.html` (the real production build,
+  fully offline — no GitHub URL, no localhost, no dev server).
+- A `preBuild` guard fails the Android build if `dist/index.html` is missing,
+  so a hollow APK can never be produced.
+- **App identity**: package `app.naamjap.counter`, launcher label **Naam Jap**,
+  launcher icons derived from `public/icon-512.png`.
+- **Permissions** (nothing else is requested): `RECORD_AUDIO` — only asked at
+  runtime when the Voice tab's `getUserMedia()` flow runs; `INTERNET` — the
+  app references a hosted brand logo and web fonts, and works fully offline
+  without either.
+- **Voice note**: Android WebView does not implement the Web Speech
+  *recognition* API (`webkitSpeechRecognition`); the web app detects that and
+  uses its built-in demo fallback, exactly as it does in browsers without the
+  API. TTS (mantra speaking) uses `speechSynthesis` where available.
+- **Back button** walks the WebView history first and only exits when there is
+  no in-app navigation to go back into.
+
+**CI** (`.github/workflows/build-apk.yml`): on push to `main` (and manual
+dispatch) — Temurin Java 17 → Node 22 → `npm ci` → `npm run build` → verify
+`dist/` → Gradle 9.3.1 (`gradle/actions/setup-gradle`) → temporary debug
+keystore (runner-local, never committed/cached) →
+`gradle :app:assembleDebug --stacktrace --no-daemon` → verify
+`app/build/outputs/apk/debug/app-debug.apk` → Actions artifact
+**`app-debug-apk`** → GitHub Release
+(`debug-apk-build-<run>-<attempt>`, asset
+`<repo>-debug-build-<run>.apk`). No release is created before this is merged
+to `main`.
+
+Local Android builds need JDK 17+, Gradle 9.3.1 and an Android SDK
+(compileSdk 36); the web app needs none of that.
 
 ## License
 

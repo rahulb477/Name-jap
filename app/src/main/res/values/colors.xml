@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Matches the React app's splash background (#F3EDE3) so the native
+         launch screen blends straight into the in-app splash. -->
+    <color name="splash_background">#FFF3EDE3</color>
+</resources>
