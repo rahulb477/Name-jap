@@ -7,7 +7,6 @@ on:
   push:
     branches:
       - main
-      - arena/01a0dec1-name-jap
   workflow_dispatch:
 
 # Only the permission needed to create the GitHub Release with github.token.
@@ -179,27 +178,7 @@ jobs:
       # ---------------------------------------------------------------
       - name: Build debug APK
         shell: bash
-        run: |
-          set -o pipefail
-          gradle :app:assembleDebug --stacktrace --no-daemon 2>&1 | tee gradle-build-output.log
-
-      - name: Surface Gradle error annotations
-        if: failure()
-        shell: bash
-        run: |
-          LOG=gradle-build-output.log
-          if [ ! -f "$LOG" ]; then
-            echo "::error::gradle-build-output.log missing"
-            exit 0
-          fi
-          echo "===== gradle log tail ====="
-          tail -n 80 "$LOG" || true
-          awk '/^FAILURE:/{f=1} f' "$LOG" | head -n 40 | while IFS= read -r line; do
-            echo "::error title=Gradle FAILURE::${line}"
-          done
-          grep -E "error:|Execution failed for task" "$LOG" | head -n 20 | while IFS= read -r line; do
-            echo "::error title=Gradle compile::${line}"
-          done
+        run: gradle :app:assembleDebug --stacktrace --no-daemon
 
       # ---------------------------------------------------------------
       # Validate the exact expected debug APK.
@@ -357,11 +336,6 @@ jobs:
           # Create the unique release targeting this exact commit,
           # published (not draft, not prerelease) and marked latest,
           # attaching ONLY the prepared APK.
-          # Do not publish a GitHub Release from the session branch.
-          if [ "${GITHUB_REF_NAME}" != "main" ]; then
-            echo "Skipping gh release create on branch ${GITHUB_REF_NAME}."
-            exit 0
-          fi
           gh release create "$RELEASE_TAG" "$ASSET_PATH" \
             --repo "$GITHUB_REPOSITORY" \
             --target "$GITHUB_SHA" \
