@@ -1,0 +1,19 @@
+# --- Web (Node / Vite) ---
+node_modules/
+dist/
+.env
+.env.local
+
+# --- Android / Gradle ---
+.gradle/
+build/
+local.properties
+*.keystore
+*.jks
+.cxx/
+captures/
+
+# --- IDE / OS ---
+.idea/
+*.iml
+.DS_Store

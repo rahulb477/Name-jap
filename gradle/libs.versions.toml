@@ -1,0 +1,7 @@
+[versions]
+# Android Gradle Plugin — required version for this project's build pipeline.
+# AGP 9.1.1 requires Gradle 9.3.1 (min/default) and JDK 17 (min/default).
+agp = "9.1.1"
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
