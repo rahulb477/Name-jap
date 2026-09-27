@@ -121,11 +121,13 @@ public class MainActivity extends Activity {
     private class AppWebChromeClient extends WebChromeClient {
         @Override
         public void onPermissionRequest(PermissionRequest request) {
-            int count = request.getResources().size();
+            // getResources() returns String[] (API 21+), not a SparseArray.
+            String[] resources = request.getResources();
+            int count = resources.length;
             String[] granted = new String[count];
             boolean audioOnly = count > 0;
             for (int i = 0; i < count; i++) {
-                if (request.getResources().valueAt(i) == PermissionRequest.Resource.AUDIO_CAPTURE) {
+                if (PermissionRequest.RESOURCE_AUDIO_CAPTURE.equals(resources[i])) {
                     granted[i] = PermissionRequest.RESOURCE_AUDIO_CAPTURE;
                 } else {
                     audioOnly = false;
