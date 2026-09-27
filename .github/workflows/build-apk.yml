@@ -232,7 +232,7 @@ jobs:
 
       # ---------------------------------------------------------------
       # Release asset — a copy in a temp directory OUTSIDE the repository.
-      # Filename: <sanitized-repo-name>-debug-build-<run number>.apk
+      # Filename: fixed stable name Name-jap.apk (permanent latest-release URL).
       # Also builds the unique release tag/title for this run.
       # ---------------------------------------------------------------
       - name: Prepare APK release asset
@@ -247,12 +247,9 @@ jobs:
             exit 1
           fi
 
-          REPO_NAME="${GITHUB_REPOSITORY#*/}"
-          if [ -z "$REPO_NAME" ]; then
-            REPO_NAME="android-app"
-          fi
-          SANITIZED_REPO_NAME="$(printf '%s' "$REPO_NAME" | LC_ALL=C tr -c 'A-Za-z0-9._-' '-')"
-          ASSET_NAME="${SANITIZED_REPO_NAME}-debug-build-${GITHUB_RUN_NUMBER}.apk"
+          # Fixed stable filename so the landing page can use one permanent URL:
+          # https://github.com/<owner>/<repo>/releases/latest/download/Name-jap.apk
+          ASSET_NAME="Name-jap.apk"
 
           # Temp directory outside the repository (mktemp uses the runner's temp dir).
           ASSET_DIR="$(mktemp -d)"
